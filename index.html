@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Field Guide — Learn to install and run AI agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1B1E23;
+    --paper: #F7F5F0;
+    --paper-dim: #EFEBE2;
+    --signal: #FF6B35;
+    --moss: #2D5F4F;
+    --moss-light: #4A8270;
+    --gray: #6B6F76;
+    --gray-light: #9A9DA3;
+    --line: #D9D4C7;
+    --white: #FFFFFF;
+
+    --font-display: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  img { max-width: 100%; display: block; }
+
+  .wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 0 20px; }
+  }
+
+  /* ===== visible focus ===== */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid var(--signal);
+    outline-offset: 3px;
+  }
+
+  /* ===================== NAV ===================== */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo .dot { color: var(--signal); }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .nav-links a {
+    color: var(--gray);
+    transition: color 0.15s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 9px 16px;
+    border-radius: 3px;
+    transition: background 0.15s;
+  }
+  .nav-cta:hover { background: var(--signal); }
+  .nav-toggle { display: none; }
+
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+    .nav-cta { font-size: 12px; padding: 8px 12px; }
+    .logo { font-size: 14px; }
+  }
+
+  /* ===================== HERO ===================== */
+  .hero {
+    padding: 88px 0 72px;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero { padding: 48px 0 56px; }
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--moss);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--moss);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+  }
+  .hero h1 .accent { color: var(--signal); }
+  @media (max-width: 880px) {
+    .hero h1 { font-size: 36px; }
+  }
+  @media (max-width: 460px) {
+    .hero h1 { font-size: 30px; }
+  }
+
+  .hero p.lede {
+    font-size: 18px;
+    color: #3a3e44;
+    max-width: 480px;
+    margin-bottom: 32px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 13px 22px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--signal);
+    color: var(--white);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 0 0 #1B1E23; }
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    font-family: var(--font-mono);
+  }
+  .hero-stats div { font-size: 12px; color: var(--gray); }
+  .hero-stats strong { display: block; font-size: 20px; color: var(--ink); font-family: var(--font-display); }
+
+  /* ---- Terminal signature element ---- */
+  .terminal {
+    background: var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -20px rgba(27,30,35,0.45);
+    border: 1px solid #2b2f37;
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    background: #20242b;
+    border-bottom: 1px solid #2b2f37;
+  }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-dot:nth-child(1) { background: #ff5f57; }
+  .terminal-dot:nth-child(2) { background: #febc2e; }
+  .terminal-dot:nth-child(3) { background: #28c840; }
+  .terminal-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gray-light);
+    margin-left: 8px;
+  }
+  .terminal-body {
+    padding: 22px 20px 26px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    min-height: 280px;
+  }
+  .term-line { color: #d8d6cf; margin-bottom: 10px; white-space: pre-wrap; }
+  .term-prompt { color: var(--moss-light); }
+  .term-prompt::before { content: '$ '; color: var(--gray-light); }
+  .term-output { color: #b8bcc4; }
+  .term-agent-label { color: var(--signal); font-weight: 500; }
+  .cursor-blink {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: var(--signal);
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .typed-text { display: inline; }
+
+  /* ===================== SECTION SCAFFOLDING ===================== */
+  section { padding: 84px 0; }
+  .section-head {
+    margin-bottom: 48px;
+    max-width: 620px;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--signal);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  .section-head p { color: var(--gray); font-size: 16px; max-width: 540px; }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 0;
+  }
+
+  /* ===================== WHAT IS AN AGENT ===================== */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 760px) {
+    .concept-grid { grid-template-columns: 1fr; }
+  }
+  .concept-card {
+    background: var(--paper);
+    padding: 28px 26px;
+  }
+  .concept-card .glyph {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--signal);
+    margin-bottom: 14px;
+  }
+  .concept-card h3 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .concept-card p { font-size: 14.5px; color: var(--gray); }
+
+  /* ===================== INSTALL WALKTHROUGH (numbered — genuine sequence) ===================== */
+  .steps {
+    display: grid;
+    gap: 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 28px;
+    padding: 36px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: 1px solid var(--ink); }
+  @media (max-width: 700px) {
+    .step { grid-template-columns: 52px 1fr; gap: 18px; }
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--paper-dim);
+    -webkit-text-stroke: 1.5px var(--ink);
+    line-height: 1;
+  }
+  @media (max-width: 700px) {
+    .step-num { font-size: 28px; }
+  }
+  .step-content h3 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+  .step-content p { color: #3a3e44; font-size: 15px; max-width: 600px; margin-bottom: 14px; }
+  .code-line {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    background: var(--ink);
+    color: #d8d6cf;
+    padding: 12px 16px;
+    border-radius: 4px;
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .code-line .comment { color: var(--gray-light); }
+  .step-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--moss);
+    border: 1px solid var(--moss);
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-top: 12px;
+  }
+
+  /* ===================== PRACTICES (good habits) ===================== */
+  .practices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 700px) {
+    .practices { grid-template-columns: 1fr; }
+  }
+  .practice {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--moss);
+    background: var(--white);
+    padding: 22px 24px;
+    border-radius: 0 4px 4px 0;
+  }
+  .practice.warn { border-left-color: var(--signal); }
+  .practice h4 {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .practice h4 .tick { color: var(--moss); }
+  .practice.warn h4 .tick { color: var(--signal); }
+  .practice p { font-size: 14.5px; color: var(--gray); }
+
+  /* ===================== DIRECTORY ===================== */
+  .directory-section { background: var(--ink); color: var(--paper); }
+  .directory-section .section-tag { color: var(--signal); }
+  .directory-section .section-head p { color: var(--gray-light); }
+
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .filter-btn {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 9px 16px;
+    border: 1px solid #3a3e46;
+    border-radius: 20px;
+    background: transparent;
+    color: var(--gray-light);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--signal); color: var(--paper); }
+  .filter-btn.active {
+    background: var(--signal);
+    border-color: var(--signal);
+    color: var(--white);
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 920px) {
+    .tool-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .tool-grid { grid-template-columns: 1fr; }
+  }
+
+  .tool-card {
+    background: #22262d;
+    border: 1px solid #33373f;
+    border-radius: 6px;
+    padding: 22px;
+    transition: border-color 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+  }
+  .tool-card:hover { border-color: var(--signal); transform: translateY(-2px); }
+  .tool-card.hidden { display: none; }
+
+  .tool-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .tool-name {
+    font-family: var(--font-display);
+    font-size: 16.5px;
+    font-weight: 700;
+  }
+  .tool-cat {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--moss-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--moss-light);
+    border-radius: 3px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  .tool-desc {
+    font-size: 13.5px;
+    color: #b8bcc4;
+    margin-bottom: 14px;
+    flex-grow: 1;
+  }
+  .tool-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--gray-light);
+    border-top: 1px solid #33373f;
+    padding-top: 12px;
+  }
+  .tool-best {
+    color: var(--gray-light);
+  }
+  .tool-link {
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .tool-link:hover { text-decoration: underline; }
+  .tool-price {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #8a8e95;
+    margin-top: 4px;
+  }
+
+  /* ===================== FAQ-ish glossary ===================== */
+  .glossary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 40px;
+  }
+  @media (max-width: 700px) { .glossary { grid-template-columns: 1fr; } }
+  .gterm { border-bottom: 1px solid var(--line); padding-bottom: 18px; }
+  .gterm dt {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .gterm dd { font-size: 14px; color: var(--gray); }
+
+  /* ===================== FOOTER ===================== */
+  footer {
+    background: var(--ink);
+    color: var(--gray-light);
+    padding: 48px 0 32px;
+    border-top: 4px solid var(--signal);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-inner .logo { color: var(--paper); }
+  footer .fineprint {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    margin-top: 28px;
+    color: #6b6f76;
+    border-top: 1px solid #2b2f37;
+    padding-top: 20px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    background: var(--signal);
+    color: white;
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    z-index: 200;
+  }
+  .skip-link:focus { left: 16px; top: 16px; }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="#main" class="logo"><span class="dot">●</span> agent_field_guide</a>
+    <div class="nav-links">
+      <a href="#concepts">What's an agent</a>
+      <a href="#install">Get one running</a>
+      <a href="#practices">Use it well</a>
+      <a href="#directory">Find a tool</a>
+    </div>
+    <a href="#directory" class="nav-cta">Browse tools →</a>
+  </div>
+</nav>
+
+<main id="main">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">For people who've never installed one</span>
+        <h1>Stop reading about agents.<br>Get <span class="accent">one running</span> in the next ten minutes.</h1>
+        <p class="lede">A plain-language guide to installing and actually using AI agents — the kind that write code, do research, and act on your behalf — plus a directory of real tools sorted by what you're trying to get done.</p>
+        <div class="hero-actions">
+          <a href="#install" class="btn btn-primary">Walk me through setup →</a>
+          <a href="#directory" class="btn btn-secondary">Just show me tools</a>
+        </div>
+        <div class="hero-stats">
+          <div><strong>6</strong>steps to your first agent</div>
+          <div><strong>20+</strong>tools in the directory</div>
+          <div><strong>0</strong>jargon you don't need</div>
+        </div>
+      </div>
+
+      <div class="terminal" role="img" aria-label="Animated terminal demo showing a user asking an agent to rename files, and the agent responding">
+        <div class="terminal-bar">
+          <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+          <span class="terminal-title">first-session — agent</span>
+        </div>
+        <div class="terminal-body" id="termBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== WHAT IS AN AGENT ===================== -->
+  <section id="concepts">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag">First, the basics</span>
+        <h2>An agent isn't just a chatbot with a new name.</h2>
+        <p>A chatbot answers you. An agent acts: it can read your files, run commands, browse the web, and check its own work — usually several steps in a row, without you approving each one.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="glyph">→</div>
+          <h3>It takes real actions</h3>
+          <p>Instead of just suggesting code, a coding agent will open the file, make the edit, run the tests, and tell you what happened. The action is the output, not just text describing one.</p>
+        </div>
+        <div class="concept-card">
+          <div class="glyph">↻</div>
+          <h3>It works in a loop</h3>
+          <p>Plan, act, check, adjust, repeat. If a step fails, a good agent notices and tries something else — that loop is what separates "agentic" tools from autocomplete.</p>
+        </div>
+        <div class="concept-card">
+          <div class="glyph">⌘</div>
+          <h3>It lives somewhere specific</h3>
+          <p>A terminal, a browser extension, an inbox, a code editor. Where it lives determines what it can touch — which is the first thing to figure out before you install one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== INSTALL WALKTHROUGH ===================== -->
+  <section id="install">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag">The actual walkthrough</span>
+        <h2>From zero to your first agent, in six steps.</h2>
+        <p>This is the same process whether you're installing a coding agent, a research assistant, or an inbox agent — only the specific download changes.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h3>Decide what you actually want done</h3>
+            <p>"I want help with AI" is too vague for an agent to be useful. "I want something to clean up my inbox every morning" or "I want help refactoring this codebase" is something you can match to a specific tool. Pick one real task before you install anything.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h3>Pick the tool that matches where the work happens</h3>
+            <p>Coding work → a terminal or editor agent. Writing or research → a browser-based assistant. Email and scheduling → an inbox-connected agent. The directory below is sorted exactly this way.</p>
+            <span class="step-tag">see: directory below</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h3>Install it where it needs to live</h3>
+            <p>Terminal-based agents install via a package manager. For example, a common pattern looks like this:</p>
+            <div class="code-line">npm install -g &lt;agent-cli-name&gt;<span class="comment">  # run in your terminal</span></div>
+            <p style="margin-top:14px;">Browser or desktop agents are usually a normal download-and-open install, same as any app. If a tool asks for an API key during install, that's normal — it's how it authenticates to the model running behind it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h3>Give it the smallest possible first task</h3>
+            <p>Not "reorganize my entire project." Try: "list the files in this folder and tell me which ones haven't been touched in 6 months." A small, checkable task tells you fast whether the tool actually works for you, before you trust it with anything bigger.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <h3>Read what it did before you let it continue</h3>
+            <p>Most agents will show you a plan or a diff before acting, or a log of what it just did. Read it. This is the single habit that separates people who use agents well from people who get burned by them.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">06</div>
+          <div class="step-content">
+            <h3>Give it permissions gradually</h3>
+            <p>Start read-only or with confirmation prompts on. Once you've seen it behave correctly on small tasks several times, widen what it's allowed to touch — your whole codebase, your real inbox, your calendar. Trust is earned in small increments, not granted on day one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== PRACTICES ===================== -->
+  <section id="practices">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag">Habits that matter more than the tool</span>
+        <h2>The difference between a good and bad agent session is usually you.</h2>
+        <p>Two people using the identical tool get wildly different results. Here's what separates them.</p>
+      </div>
+
+      <div class="practices">
+        <div class="practice">
+          <h4><span class="tick">✓</span> Be specific about the outcome, not the method</h4>
+          <p>"Fix the bug where login fails after 10 minutes" works better than "look at my auth code." Tell it the symptom and the goal; let it find the method.</p>
+        </div>
+        <div class="practice">
+          <h4><span class="tick">✓</span> Give it a way to check its own work</h4>
+          <p>"Run the tests after" or "verify the page loads" turns a guess into a checked result. Agents that can self-verify make far fewer mistakes you have to catch later.</p>
+        </div>
+        <div class="practice">
+          <h4><span class="tick">✓</span> Keep tasks scoped to one sitting</h4>
+          <p>Long, sprawling instructions accumulate small misunderstandings. Break a big goal into tasks you could each explain in one sentence.</p>
+        </div>
+        <div class="practice">
+          <h4><span class="tick">✓</span> Treat its first answer as a draft</h4>
+          <p>Even strong agents are better at producing a solid first pass than a perfect final one. Plan one review pass into every task, not just the risky ones.</p>
+        </div>
+        <div class="practice warn">
+          <h4><span class="tick">!</span> Don't hand over financial or irreversible actions early</h4>
+          <p>Sending money, deleting data, emailing someone outside your org — keep a human-confirms-first step on anything you can't undo, no matter how long you've trusted the tool.</p>
+        </div>
+        <div class="practice warn">
+          <h4><span class="tick">!</span> Watch for confident-sounding wrong answers</h4>
+          <p>Agents state incorrect things with the same tone as correct things. Spot-check anything you can't easily verify yourself, especially numbers, citations, and claims about your own code or data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DIRECTORY ===================== -->
+  <section id="directory" class="directory-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag">The directory</span>
+        <h2>Find the agent that matches your task.</h2>
+        <p>Filter by what you're trying to get done. Every entry links out to the tool itself — this page doesn't host or run any of them.</p>
+      </div>
+
+      <div class="filter-bar" role="group" aria-label="Filter tools by category">
+        <button class="filter-btn active" data-filter="all">All tools</button>
+        <button class="filter-btn" data-filter="coding">Coding</button>
+        <button class="filter-btn" data-filter="writing">Writing &amp; research</button>
+        <button class="filter-btn" data-filter="productivity">Personal productivity</button>
+        <button class="filter-btn" data-filter="general">General-purpose</button>
+        <button class="filter-btn" data-filter="builder">No-code / build-your-own</button>
+      </div>
+
+      <div class="tool-grid" id="toolGrid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== GLOSSARY ===================== -->
+  <section id="glossary">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag">Quick reference</span>
+        <h2>Terms you'll run into</h2>
+      </div>
+      <dl class="glossary">
+        <div class="gterm">
+          <dt>Context window</dt>
+          <dd>How much text (code, conversation, documents) the agent can "see" at once. Bigger windows mean it can work across larger codebases or longer documents without forgetting earlier parts.</dd>
+        </div>
+        <div class="gterm">
+          <dt>Autonomous vs. assistant mode</dt>
+          <dd>Assistant mode asks before each action. Autonomous mode runs a multi-step task and reports back when done. Most agents let you choose per task.</dd>
+        </div>
+        <div class="gterm">
+          <dt>MCP (Model Context Protocol)</dt>
+          <dd>A common standard that lets different agents connect to the same outside tools — your files, a database, a search engine — without each one needing custom code.</dd>
+        </div>
+        <div class="gterm">
+          <dt>Token</dt>
+          <dd>The unit agents are billed and limited by — roughly a chunk of a word. Long tasks, large files, and long conversations all consume more of them.</dd>
+        </div>
+        <div class="gterm">
+          <dt>Harness</dt>
+          <dd>The software wrapped around an AI model that gives it tools, memory, and permissions. Two agents can use similar underlying models and still feel completely different because of the harness.</dd>
+        </div>
+        <div class="gterm">
+          <dt>Sandbox</dt>
+          <dd>An isolated environment an agent runs in so its actions can't directly damage your real files or systems until you decide to apply them.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <a href="#main" class="logo"><span class="dot" style="color: var(--signal);">●</span> agent_field_guide</a>
+      <div style="font-family: var(--font-mono); font-size: 12.5px;">Built to get you running, not to sell you anything.</div>
+    </div>
+    <div class="fineprint wrap" style="padding-left:0; padding-right:0;">
+      Tool listings reflect publicly available information and may change — pricing, features, and availability shift fast in this space. Always check the tool's own site before signing up. No tool here pays for placement.
+    </div>
+  </div>
+</footer>
+
+<script>
+// ====================== TERMINAL ANIMATION ======================
+const termBody = document.getElementById('termBody');
+
+const sequence = [
+  { type: 'prompt', text: 'agent rename ./screenshots --pattern "date + short description"' },
+  { type: 'pause', ms: 400 },
+  { type: 'output', text: 'Scanning 14 files in ./screenshots...' },
+  { type: 'output', text: 'Plan: rename using EXIF date + a short label inferred from each image.' },
+  { type: 'output', text: '  Screenshot_2049.png  →  2026-06-12_login-error.png' },
+  { type: 'output', text: '  Screenshot_2050.png  →  2026-06-12_billing-page.png' },
+  { type: 'output', text: '  ...12 more' },
+  { type: 'agent', text: 'Proceed with all 14 renames? [y/n]' },
+  { type: 'pause', ms: 600 },
+  { type: 'prompt', text: 'y' },
+  { type: 'output', text: '✓ Renamed 14 files. Nothing else was touched.' },
+];
+
+let seqIndex = 0;
+
+function typeText(el, text, speed, cb) {
+  let i = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor-blink';
+  el.appendChild(cursor);
+  const interval = setInterval(() => {
+    if (i < text.length) {
+      cursor.insertAdjacentText('beforebegin', text[i]);
+      i++;
+    } else {
+      clearInterval(interval);
+      cursor.remove();
+      if (cb) cb();
+    }
+  }, speed);
+}
+
+function runSequence() {
+  if (seqIndex >= sequence.length) {
+    setTimeout(() => {
+      termBody.innerHTML = '';
+      seqIndex = 0;
+      runSequence();
+    }, 2600);
+    return;
+  }
+  const step = sequence[seqIndex];
+  seqIndex++;
+
+  if (step.type === 'pause') {
+    setTimeout(runSequence, step.ms);
+    return;
+  }
+
+  const line = document.createElement('div');
+  line.className = 'term-line';
+
+  if (step.type === 'prompt') {
+    const span = document.createElement('span');
+    span.className = 'term-prompt typed-text';
+    line.appendChild(span);
+    termBody.appendChild(line);
+    typeText(span, step.text, 28, () => setTimeout(runSequence, 250));
+  } else if (step.type === 'agent') {
+    line.innerHTML = '<span class="term-agent-label">agent ›</span> ';
+    const span = document.createElement('span');
+    span.className = 'typed-text';
+    line.appendChild(span);
+    termBody.appendChild(line);
+    typeText(span, step.text, 22, () => setTimeout(runSequence, 250));
+  } else {
+    line.className += ' term-output';
+    line.textContent = step.text;
+    termBody.appendChild(line);
+    setTimeout(runSequence, 320);
+  }
+
+  termBody.scrollTop = termBody.scrollHeight;
+}
+
+runSequence();
+
+// ====================== TOOL DIRECTORY DATA ======================
+const tools = [
+  // CODING
+  {
+    name: "Claude Code",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "A terminal- and IDE-based agent that reads your repo, plans multi-file changes, and runs tests as it goes. Strong on long, complex refactors.",
+    best: "Devs wanting a conversational agent in their terminal/IDE",
+    price: "Free tier · Pro from ~$20/mo",
+    url: "https://claude.com/product/claude-code"
+  },
+  {
+    name: "Cursor",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "An AI-native code editor with fast inline completion and an agent mode that can work across files inside your existing project.",
+    best: "Developers who want agent features inside a full IDE",
+    price: "Free tier · paid plans vary",
+    url: "https://cursor.com"
+  },
+  {
+    name: "GitHub Copilot",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "Inline code suggestions plus an agent mode for multi-step edits, integrated directly into popular editors and GitHub itself.",
+    best: "Teams already living inside the GitHub ecosystem",
+    price: "Free tier · paid plans vary",
+    url: "https://github.com/features/copilot"
+  },
+  {
+    name: "Devin",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "Runs in its own sandboxed cloud machine with a browser and terminal. You assign a task in plain English and it opens a pull request when finished.",
+    best: "Teams who want to hand off a whole ticket, unattended",
+    price: "Usage-based, contact for pricing",
+    url: "https://devin.ai"
+  },
+  {
+    name: "Replit Agent",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "A cloud IDE with an agent that can scaffold, run, and deploy a full app from a natural-language description — nothing to install locally.",
+    best: "Beginners who don't want to set up a local dev environment",
+    price: "Free starter tier · paid tiers vary",
+    url: "https://replit.com"
+  },
+  {
+    name: "Cline",
+    cat: "coding",
+    catLabel: "Coding",
+    desc: "An open-source VS Code extension that can inspect your project, edit files, run terminal commands, and use a browser — asking permission at each step.",
+    best: "Developers who want transparency and control over every action",
+    price: "Free, open-source (bring your own API key)",
+    url: "https://github.com/cline/cline"
+  },
+
+  // WRITING & RESEARCH
+  {
+    name: "Claude",
+    cat: "writing",
+    catLabel: "Writing & research",
+    desc: "A general assistant strong at long-form writing, editing, and reasoning through drafts, with web search and document upload built in.",
+    best: "Anyone drafting, editing, or reasoning through written work",
+    price: "Free tier · Pro from ~$20/mo",
+    url: "https://claude.ai"
+  },
+  {
+    name: "Perplexity",
+    cat: "writing",
+    catLabel: "Writing & research",
+    desc: "An answer engine that searches the live web and cites its sources directly in the response, instead of returning a list of links to dig through yourself.",
+    best: "Fast, sourced answers to specific research questions",
+    price: "Free tier · Pro from ~$20/mo",
+    url: "https://perplexity.ai"
+  },
+  {
+    name: "NotebookLM",
+    cat: "writing",
+    catLabel: "Writing & research",
+    desc: "Upload your own documents and get an assistant that answers strictly from that material, with citations back to the exact source passage.",
+    best: "Working through a specific stack of documents or notes",
+    price: "Free, with a paid Plus tier",
+    url: "https://notebooklm.google"
+  },
+  {
+    name: "Elicit",
+    cat: "writing",
+    catLabel: "Writing & research",
+    desc: "Searches and summarizes academic papers, extracting findings into a structured table you can compare across studies.",
+    best: "Literature reviews and academic research screening",
+    price: "Free tier · paid plans for heavier use",
+    url: "https://elicit.com"
+  },
+
+  // PERSONAL PRODUCTIVITY
+  {
+    name: "Lindy",
+    cat: "productivity",
+    catLabel: "Personal productivity",
+    desc: "Connects to Gmail or Outlook to sort your inbox, draft replies in your voice, schedule meetings, and take notes.",
+    best: "Anyone whose day is dominated by email and calendar admin",
+    price: "Paid plans, free trial available",
+    url: "https://lindy.ai"
+  },
+  {
+    name: "Notion AI",
+    cat: "productivity",
+    catLabel: "Personal productivity",
+    desc: "Built into the Notion workspace you may already use — summarizes pages, drafts content, and can be set up as task-specific agents.",
+    best: "People who already organize work and notes in Notion",
+    price: "Add-on to Notion plans",
+    url: "https://notion.so/product/ai"
+  },
+  {
+    name: "Fireflies",
+    cat: "productivity",
+    catLabel: "Personal productivity",
+    desc: "Joins your calls, transcribes them, and surfaces searchable summaries and action items afterward.",
+    best: "Anyone who forgets what was actually agreed on in meetings",
+    price: "Free tier · paid plans vary",
+    url: "https://fireflies.ai"
+  },
+
+  // GENERAL-PURPOSE
+  {
+    name: "ChatGPT",
+    cat: "general",
+    catLabel: "General-purpose",
+    desc: "A broad assistant covering writing, coding help, research, and image and file analysis in one interface, with an agent mode for multi-step tasks.",
+    best: "A single tool that handles a wide range of everyday tasks",
+    price: "Free tier · Plus from ~$20/mo",
+    url: "https://chatgpt.com"
+  },
+  {
+    name: "Gemini",
+    cat: "general",
+    catLabel: "General-purpose",
+    desc: "Google's assistant, with deep integration across Search, Docs, Sheets, and Gmail for people already living in that ecosystem.",
+    best: "Heavy users of Google Workspace who want AI built in",
+    price: "Free tier · paid plans vary",
+    url: "https://gemini.google.com"
+  },
+  {
+    name: "Manus",
+    cat: "general",
+    catLabel: "General-purpose",
+    desc: "A general-purpose agent that breaks a goal into subtasks and executes them independently — research, coding, and data work in one handoff.",
+    best: "Power users handing off an entire multi-step project at once",
+    price: "Free tier · paid plans from ~$19/mo",
+    url: "https://manus.im"
+  },
+
+  // NO-CODE / BUILD YOUR OWN
+  {
+    name: "n8n",
+    cat: "builder",
+    catLabel: "Build your own",
+    desc: "An open-source, node-based workflow builder for chaining AI steps and ordinary app integrations together into a repeatable automation.",
+    best: "People comfortable building flows visually, without writing code",
+    price: "Free self-hosted · paid cloud plans",
+    url: "https://n8n.io"
+  },
+  {
+    name: "Zapier",
+    cat: "builder",
+    catLabel: "Build your own",
+    desc: "The most widely-integrated automation platform, now with AI steps you can drop into otherwise ordinary trigger-and-action workflows.",
+    best: "Connecting AI steps into tools you already use daily",
+    price: "Free tier · paid plans vary",
+    url: "https://zapier.com"
+  },
+  {
+    name: "Gumloop",
+    cat: "builder",
+    catLabel: "Build your own",
+    desc: "A visual builder purpose-built for AI-driven workflows, with templates as a starting point rather than a blank canvas.",
+    best: "Beginners who want a template to copy and adapt",
+    price: "Free tier · paid plans vary",
+    url: "https://gumloop.com"
+  },
+];
+
+function renderTools(filter) {
+  const grid = document.getElementById('toolGrid');
+  grid.innerHTML = '';
+  tools.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'tool-card';
+    card.dataset.cat = t.cat;
+    if (filter !== 'all' && t.cat !== filter) card.classList.add('hidden');
+    card.innerHTML = `
+      <div class="tool-card-top">
+        <span class="tool-name">${t.name}</span>
+        <span class="tool-cat">${t.catLabel}</span>
+      </div>
+      <p class="tool-desc">${t.desc}</p>
+      <div class="tool-meta">
+        <div>
+          <div class="tool-best">${t.best}</div>
+          <div class="tool-price">${t.price}</div>
+        </div>
+        <a href="${t.url}" class="tool-link" target="_blank" rel="noopener noreferrer">Visit →</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+renderTools('all');
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTools(btn.dataset.filter);
+  });
+});
+</script>
+
+</body>
+</html>
