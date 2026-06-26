@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agents for Everyone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:      #F7F3EE;
+      --paper:      #FDFAF6;
+      --warm-white: #FFFEF9;
+      --stone:      #E8E2D9;
+      --stone-mid:  #C9C0B4;
+      --muted:      #9A9187;
+      --bark:       #5C5248;
+      --ink:        #2C2620;
+      --orange:     #D4622A;
+      --orange-lt:  #F5E8DF;
+      --orange-mid: #E8956A;
+      --green:      #4A7C59;
+      --green-lt:   #E4EDE7;
+      --green-mid:  #7FAF8C;
+      --gold:       #C4923A;
+      --gold-lt:    #F5EDDD;
+      --r: 10px;
+      --font-disp: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 1rem; line-height: 1.7; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(253,250,246,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--stone);
+    }
+    .nav-logo { font-family: var(--font-disp); font-size: 1.15rem; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 0.55rem; }
+    .logo-mark { width: 28px; height: 28px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: #fff; font-family: var(--font-mono); font-weight: 500; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 400; transition: color 0.18s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { background: var(--orange) !important; color: #fff !important; padding: 0.4rem 1.1rem; border-radius: 50px; font-weight: 500 !important; }
+    .nav-cta:hover { opacity: 0.88 !important; }
+
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 7rem 1.5rem 4rem; background: var(--warm-white); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -10%; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; background: radial-gradient(ellipse, rgba(212,98,42,0.06) 0%, transparent 68%); pointer-events: none; }
+    .hero-inner { max-width: 780px; position: relative; z-index: 1; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--orange-lt); border: 1px solid rgba(212,98,42,0.22); color: var(--orange); font-family: var(--font-mono); font-size: 0.75rem; padding: 0.35rem 0.85rem; border-radius: 50px; margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .hero h1 { font-family: var(--font-disp); font-size: clamp(2.8rem, 7vw, 5.2rem); font-weight: 400; line-height: 1.06; color: var(--ink); margin-bottom: 1.4rem; }
+    .hero h1 em { font-style: italic; color: var(--orange); }
+    .hero-sub { font-size: 1.1rem; color: var(--bark); max-width: 520px; margin: 0 auto 2.5rem; font-weight: 300; line-height: 1.75; }
+    .hero-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--orange); color: #fff; padding: 0.75rem 2rem; border-radius: 50px; font-weight: 500; font-size: 0.93rem; text-decoration: none; transition: opacity 0.18s, transform 0.18s; font-family: var(--font-body); }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-ghost { border: 1px solid var(--stone-mid); color: var(--bark); padding: 0.75rem 2rem; border-radius: 50px; font-weight: 400; font-size: 0.93rem; text-decoration: none; transition: border-color 0.18s, color 0.18s; background: transparent; font-family: var(--font-body); }
+    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+    .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); color: var(--stone-mid); font-size: 0.72rem; font-family: var(--font-mono); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, var(--stone-mid), transparent); }
+
+    section { position: relative; }
+    .section-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .section-title { font-family: var(--font-disp); font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 400; color: var(--ink); line-height: 1.15; margin-bottom: 0.9rem; }
+    .section-sub { color: var(--bark); max-width: 540px; font-size: 1.02rem; font-weight: 300; line-height: 1.75; }
+    .container    { max-width: 1080px; margin: 0 auto; padding: 5.5rem 2rem; }
+    .container-sm { max-width: 780px;  margin: 0 auto; padding: 5.5rem 2rem; }
+    .bg-cream { background: var(--cream); }
+    .bg-paper { background: var(--paper); }
+    .bg-white { background: var(--warm-white); }
+    hr.divider { border: none; border-top: 1px solid var(--stone); margin: 0; }
+
+    .what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem; }
+    .agent-diagram { background: var(--warm-white); border: 1px solid var(--stone); border-radius: 14px; padding: 1.6rem; font-family: var(--font-mono); font-size: 0.8rem; }
+    .diag-label { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--stone-mid); text-transform: uppercase; margin-bottom: 1.2rem; }
+    .diag-row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; color: var(--bark); }
+    .diag-row:last-child { margin-bottom: 0; }
+    .diag-tag { padding: 0.18rem 0.6rem; border-radius: 4px; font-size: 0.72rem; white-space: nowrap; min-width: 58px; text-align: center; }
+    .diag-tag.you   { background: var(--gold-lt);   color: var(--gold);   border: 1px solid rgba(196,146,58,0.25); }
+    .diag-tag.think { background: var(--orange-lt); color: var(--orange); border: 1px solid rgba(212,98,42,0.22); }
+    .diag-tag.act   { background: var(--green-lt);  color: var(--green);  border: 1px solid rgba(74,124,89,0.22); }
+    .diag-tag.done  { background: var(--green-lt);  color: var(--green);  border: 1px solid rgba(74,124,89,0.22); }
+    .diag-tag.check { background: var(--stone);     color: var(--bark);   border: 1px solid var(--stone-mid); }
+    .diag-arrow { color: var(--stone-mid); }
+    .diag-connector { padding-left: 1.2rem; color: var(--stone-mid); font-size: 0.75rem; margin-bottom: 0.75rem; }
+    .what-points { list-style: none; }
+    .what-points li { display: flex; gap: 1rem; margin-bottom: 1.4rem; align-items: flex-start; }
+    .pt-icon { width: 38px; height: 38px; min-width: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .pt-icon.o { background: var(--orange-lt); }
+    .pt-icon.g { background: var(--green-lt); }
+    .pt-icon.s { background: var(--stone); }
+    .pt-text strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 0.1rem; }
+    .pt-text span   { color: var(--muted); font-size: 0.91rem; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.1rem; margin-top: 2.5rem; }
+    .card { background: var(--warm-white); border: 1px solid var(--stone); border-radius: 14px; padding: 1.5rem 1.4rem; transition: border-color 0.18s, transform 0.18s; }
+    .card:hover { border-color: var(--orange-mid); transform: translateY(-2px); }
+    .card-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--orange-lt); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; margin-bottom: 0.9rem; }
+    .card-icon.green { background: var(--green-lt); }
+    .card-icon.gold  { background: var(--gold-lt); }
+    .card-icon.stone { background: var(--stone); }
+    .card h3 { font-family: var(--font-disp); font-size: 1.05rem; font-weight: 400; color: var(--ink); margin-bottom: 0.4rem; }
+    .card p  { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+
+    .steps-list { margin-top: 2.5rem; }
+    .step { display: grid; grid-template-columns: 52px 1fr; gap: 1.25rem; margin-bottom: 1.8rem; position: relative; }
+    .step:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -1.8rem; width: 1px; background: var(--stone); }
+    .step-num { width: 52px; height: 52px; background: var(--warm-white); border: 1px solid var(--stone); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.78rem; color: var(--orange); font-weight: 500; flex-shrink: 0; }
+    .step-body { padding-top: 0.85rem; }
+    .step-body h3 { font-family: var(--font-disp); font-size: 1.05rem; font-weight: 400; color: var(--ink); margin-bottom: 0.25rem; }
+    .step-body p  { color: var(--muted); font-size: 0.91rem; }
+
+    .tabs { display: flex; gap: 0.4rem; margin: 2rem 0 1.25rem; flex-wrap: wrap; }
+    .tab { background: var(--warm-white); border: 1px solid var(--stone); color: var(--muted); padding: 0.42rem 1rem; border-radius: 6px; cursor: pointer; font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; transition: all 0.18s; }
+    .tab:hover { color: var(--ink); border-color: var(--stone-mid); }
+    .tab.active { background: var(--orange-lt); border-color: rgba(212,98,42,0.3); color: var(--orange); font-weight: 500; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .install-card { background: var(--warm-white); border: 1px solid var(--stone); border-radius: 14px; overflow: hidden; }
+    .install-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.4rem; border-bottom: 1px solid var(--stone); background: var(--cream); }
+    .install-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+    .copy-btn { background: var(--warm-white); border: 1px solid var(--stone); color: var(--bark); padding: 0.28rem 0.75rem; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-family: var(--font-body); transition: border-color 0.18s, color 0.18s; }
+    .copy-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .install-body { padding: 1.4rem; }
+    .install-steps { list-style: none; counter-reset: step; }
+    .install-steps li { counter-increment: step; display: grid; grid-template-columns: 26px 1fr; gap: 0.85rem; margin-bottom: 1.2rem; align-items: start; }
+    .install-steps li::before { content: counter(step); width: 26px; height: 26px; background: var(--orange-lt); border: 1px solid rgba(212,98,42,0.22); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.72rem; color: var(--orange); flex-shrink: 0; }
+    .install-steps li > div strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 0.22rem; font-size: 0.93rem; }
+    .install-steps li > div span  { color: var(--muted); font-size: 0.87rem; }
+    code { font-family: var(--font-mono); background: var(--stone); padding: 0.08rem 0.38rem; border-radius: 4px; font-size: 0.82em; color: var(--bark); }
+    pre  { background: var(--ink); border-radius: 6px; padding: 1rem 1.2rem; font-family: var(--font-mono); font-size: 0.8rem; color: #e8d8c4; overflow-x: auto; margin-top: 0.65rem; line-height: 1.75; }
+    pre .c { color: #7a6a5a; }
+    pre .k { color: var(--orange-mid); }
+    pre .s { color: var(--green-mid); }
+
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; margin-top: 2.2rem; }
+    .tool-card { background: var(--warm-white); border: 1px solid var(--stone); border-radius: 14px; padding: 1.2rem; display: flex; gap: 0.85rem; align-items: flex-start; text-decoration: none; transition: border-color 0.18s, transform 0.18s; }
+    .tool-card:hover { border-color: var(--green-mid); transform: translateY(-2px); }
+    .tool-icon { width: 40px; height: 40px; min-width: 40px; background: var(--green-lt); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; }
+    .tool-info strong { display: block; color: var(--ink); font-weight: 500; font-size: 0.92rem; margin-bottom: 0.12rem; }
+    .tool-info span   { color: var(--muted); font-size: 0.8rem; display: block; }
+    .tool-badge { display: inline-block; background: var(--green-lt); border: 1px solid rgba(74,124,89,0.22); color: var(--green); font-size: 0.66rem; padding: 0.08rem 0.45rem; border-radius: 50px; margin-top: 0.35rem; font-family: var(--font-mono); }
+
+    .faq-list { margin-top: 2rem; }
+    .faq-item { border: 1px solid var(--stone); border-radius: var(--r); margin-bottom: 0.6rem; background: var(--warm-white); overflow: hidden; }
+    .faq-q { width: 100%; background: none; border: none; color: var(--ink); font-family: var(--font-body); font-size: 0.95rem; font-weight: 500; text-align: left; padding: 1.1rem 1.3rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq-q:hover { color: var(--orange); }
+    .faq-icon { color: var(--stone-mid); font-size: 1.1rem; transition: transform 0.22s; flex-shrink: 0; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--orange); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 1.3rem; color: var(--muted); font-size: 0.91rem; line-height: 1.75; }
+    .faq-item.open .faq-a { max-height: 260px; padding-bottom: 1.1rem; }
+
+    .cta-section { text-align: center; padding: 6rem 1.5rem; background: var(--cream); position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 480px; height: 280px; background: radial-gradient(ellipse, rgba(74,124,89,0.09) 0%, transparent 70%); pointer-events: none; }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-section .section-title { margin-bottom: 0.65rem; }
+    .cta-section .section-sub   { margin: 0 auto 2.2rem; }
+
+    footer { border-top: 1px solid var(--stone); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: 0.82rem; font-family: var(--font-mono); }
+    footer a { color: var(--orange); text-decoration: none; }
+
+    .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 700px) {
+      nav { padding: 0.85rem 1.25rem; }
+      .nav-links { display: none; }
+      .what-grid { grid-template-columns: 1fr; }
+      .what-visual { order: -1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">ai</div>
+    AI Agents 101
+  </a>
+  <ul class="nav-links">
+    <li><a href="#what">What is it?</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#install" class="nav-cta">Get started</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">✦ No coding required to get started</div>
+    <h1>Your first<br><em>AI Agent</em><br>starts today</h1>
+    <p class="hero-sub">AI agents aren't just for engineers. Learn what they are, see what they can do for you, and install one on your device in under 10 minutes.</p>
+    <div class="hero-btns">
+      <a href="#what" class="btn-primary">Learn the basics</a>
+      <a href="#install" class="btn-ghost">Skip to install</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<hr class="divider" />
+
+<section id="what" class="bg-paper">
+  <div class="container">
+    <div class="section-label">01 — what is it</div>
+    <h2 class="section-title">An AI that doesn't just chat —<br>it <em style="font-style:italic;color:var(--orange)">does things</em></h2>
+    <p class="section-sub">A regular chatbot answers questions. An AI agent can plan, make decisions, and take action on your behalf — like having a tireless digital assistant.</p>
+    <div class="what-grid">
+      <div class="what-visual fade-up">
+        <div class="agent-diagram">
+          <div class="diag-label">Agent loop</div>
+          <div class="diag-row"><span class="diag-tag you">You</span><span class="diag-arrow">→</span><span>Give a goal: "Book me a dentist"</span></div>
+          <div class="diag-connector">↓</div>
+          <div class="diag-row"><span class="diag-tag think">Think</span><span class="diag-arrow">→</span><span>Break the goal into steps</span></div>
+          <div class="diag-connector">↓</div>
+          <div class="diag-row"><span class="diag-tag act">Act</span><span class="diag-arrow">→</span><span>Search, fill forms, send emails</span></div>
+          <div class="diag-connector">↓</div>
+          <div class="diag-row"><span class="diag-tag check">Check</span><span class="diag-arrow">→</span><span>Did it work? If not, retry</span></div>
+          <div class="diag-connector">↓</div>
+          <div class="diag-row"><span class="diag-tag done">Done</span><span class="diag-arrow">→</span><span>Reports the result back to you</span></div>
+        </div>
+      </div>
+      <ul class="what-points fade-up">
+        <li><div class="pt-icon o">🧠</div><div class="pt-text"><strong>It thinks step by step</strong><span>An agent breaks a big goal into smaller tasks automatically — you don't micromanage it.</span></div></li>
+        <li><div class="pt-icon g">🔧</div><div class="pt-text"><strong>It uses tools</strong><span>Agents can browse the web, run code, read files, send emails, and call APIs — all on your command.</span></div></li>
+        <li><div class="pt-icon o">🔁</div><div class="pt-text"><strong>It loops until it succeeds</strong><span>If something doesn't work, it retries with a different approach rather than giving up.</span></div></li>
+        <li><div class="pt-icon s">👀</div><div class="pt-text"><strong>You stay in control</strong><span>You set the goal and the limits. The agent asks before acting on anything sensitive.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="uses" class="bg-cream">
+  <div class="container">
+    <div class="section-label">02 — what can it do for me</div>
+    <h2 class="section-title">Real things people use<br>AI agents for today</h2>
+    <p class="section-sub">Not science fiction — these are tasks beginners are automating right now, with free tools.</p>
+    <div class="cards-grid">
+      <div class="card fade-up"><div class="card-icon">📧</div><h3>Manage your inbox</h3><p>Sort emails, draft replies, unsubscribe from junk, and flag important messages — without opening a single email first.</p></div>
+      <div class="card fade-up"><div class="card-icon green">🗓️</div><h3>Schedule your week</h3><p>Tell it "find a 30-minute slot with Sam." It checks both calendars, proposes times, and sends the invite for you.</p></div>
+      <div class="card fade-up"><div class="card-icon gold">🔍</div><h3>Research anything</h3><p>Hand it a question, come back to a tidy summary with sources — instead of spending an hour clicking around the web.</p></div>
+      <div class="card fade-up"><div class="card-icon stone">🛒</div><h3>Find the best price</h3><p>Give it a product and a budget. It searches multiple sites, compares reviews, and presents the best option ready to buy.</p></div>
+      <div class="card fade-up"><div class="card-icon">📄</div><h3>Fill out forms</h3><p>Expense reports, job applications, insurance forms — give the agent your info once and it handles the tedious fields.</p></div>
+      <div class="card fade-up"><div class="card-icon green">💻</div><h3>Write &amp; edit code</h3><p>Even non-developers can use an agent to write small scripts — automate a spreadsheet, rename files, or scrape a site.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="how" class="bg-white">
+  <div class="container-sm">
+    <div class="section-label">03 — how it works</div>
+    <h2 class="section-title">Under the hood,<br>in plain English</h2>
+    <p class="section-sub">You don't need to know this to use an agent — but understanding it makes you a smarter user.</p>
+    <div class="steps-list">
+      <div class="step fade-up"><div class="step-num">01</div><div class="step-body"><h3>You give it a goal</h3><p>Instead of typing a question, you describe an outcome: "Summarize all unread emails from this week and sort them by urgency."</p></div></div>
+      <div class="step fade-up"><div class="step-num">02</div><div class="step-body"><h3>The AI makes a plan</h3><p>The language model thinks through the steps: connect to email, filter by date, read each message, categorize, then summarize.</p></div></div>
+      <div class="step fade-up"><div class="step-num">03</div><div class="step-body"><h3>It calls tools to take action</h3><p>Tools are apps the agent can use — a web browser, a code runner, your calendar, a file reader. It picks the right one for each step.</p></div></div>
+      <div class="step fade-up"><div class="step-num">04</div><div class="step-body"><h3>It checks its own work</h3><p>After each step the agent reviews the result. If something went wrong, it backtracks and tries a different approach.</p></div></div>
+      <div class="step fade-up"><div class="step-num">05</div><div class="step-body"><h3>It delivers the result to you</h3><p>Once the goal is achieved, the agent presents what it did and found. You can ask follow-ups or hand it the next task.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="install" class="bg-paper">
+  <div class="container">
+    <div class="section-label">04 — install guide</div>
+    <h2 class="section-title">Get an agent running<br>on your device</h2>
+    <p class="section-sub">Pick your platform. Most people are up and running in under 10 minutes.</p>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('windows', this)">🪟 Windows</button>
+      <button class="tab" onclick="switchTab('mac', this)">🍎 Mac</button>
+      <button class="tab" onclick="switchTab('linux', this)">🐧 Linux</button>
+      <button class="tab" onclick="switchTab('phone', this)">📱 Mobile</button>
+    </div>
+
+    <div id="tab-windows" class="tab-content active">
+      <div class="install-card">
+        <div class="install-header"><span class="install-title">windows — Claude Desktop + MCP</span><button class="copy-btn" onclick="copySteps('windows')">Copy steps</button></div>
+        <div class="install-body">
+          <ol class="install-steps">
+            <li><div><strong>Download Claude Desktop</strong><span>Go to <code>claude.ai/download</code> and grab the Windows installer. Double-click the <code>.exe</code> and follow the prompts.</span></div></li>
+            <li><div><strong>Sign in or create a free account</strong><span>Use your email or a Google account. No credit card required for the free tier.</span></div></li>
+            <li><div><strong>Enable agent features in Settings</strong><span>Open the app → click your avatar → <em>Settings</em> → <em>Features</em> → turn on <em>Tools &amp; Computer Use</em>.</span></div></li>
+            <li><div><strong>Try your first agent task</strong><span>Type: <code>Search the web for the best free note-taking apps and give me a ranked list.</code></span></div></li>
+            <li><div><strong>(Optional) Add MCP servers</strong><span>MCP lets agents connect to local files, calendar, and apps. Install the filesystem server via npm:</span><pre><span class="c"># Install Node.js first from nodejs.org, then:</span>
+npm install -g @modelcontextprotocol/server-filesystem</pre></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-mac" class="tab-content">
+      <div class="install-card">
+        <div class="install-header"><span class="install-title">macos — Claude Desktop + MCP</span><button class="copy-btn" onclick="copySteps('mac')">Copy steps</button></div>
+        <div class="install-body">
+          <ol class="install-steps">
+            <li><div><strong>Download Claude for Mac</strong><span>Visit <code>claude.ai/download</code>, choose the macOS build, and drag to your <em>Applications</em> folder.</span></div></li>
+            <li><div><strong>Allow it past Gatekeeper</strong><span>macOS may flag it. Go to <em>System Settings → Privacy &amp; Security</em> and click <em>Open Anyway</em>.</span></div></li>
+            <li><div><strong>Sign in and enable Tools</strong><span>Settings → Features → enable <em>Tools &amp; Computer Use</em>.</span></div></li>
+            <li><div><strong>Add filesystem MCP access</strong><span>Let the agent read and write your files:</span><pre><span class="k">brew</span> install node
+npm install -g @modelcontextprotocol/server-filesystem</pre></div></li>
+            <li><div><strong>Test with a real task</strong><span>Try: <code>Read my Downloads folder and list files I haven't opened in 30 days.</code></span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-linux" class="tab-content">
+      <div class="install-card">
+        <div class="install-header"><span class="install-title">linux — CLI + open-source agents</span><button class="copy-btn" onclick="copySteps('linux')">Copy steps</button></div>
+        <div class="install-body">
+          <ol class="install-steps">
+            <li><div><strong>Check Python 3.10+</strong><span>Run <code>python3 --version</code>. If needed: <code>sudo apt install python3</code></span></div></li>
+            <li><div><strong>Install an agent framework</strong><span>AutoGen and CrewAI are beginner-friendly:</span><pre>pip install autogen-agentchat  <span class="c"># Microsoft AutoGen</span>
+<span class="c"># or</span>
+pip install crewai              <span class="c"># CrewAI</span></pre></div></li>
+            <li><div><strong>Get an API key</strong><span>Sign up at <code>console.anthropic.com</code> or <code>platform.openai.com</code> and copy your key.</span></div></li>
+            <li><div><strong>Run your first agent</strong><span>Create <code>agent.py</code> and run <code>python3 agent.py</code>:</span><pre><span class="k">from</span> autogen <span class="k">import</span> AssistantAgent, UserProxyAgent
+
+assistant = AssistantAgent(<span class="s">"assistant"</span>)
+user      = UserProxyAgent(<span class="s">"user"</span>, human_input_mode=<span class="s">"NEVER"</span>)
+user.initiate_chat(assistant, message=<span class="s">"What's 2+2?"</span>)</pre></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-phone" class="tab-content">
+      <div class="install-card">
+        <div class="install-header"><span class="install-title">mobile — iOS &amp; Android</span><button class="copy-btn" onclick="copySteps('phone')">Copy steps</button></div>
+        <div class="install-body">
+          <ol class="install-steps">
+            <li><div><strong>Download the Claude app</strong><span>Search "Claude AI" on the App Store (iOS) or Google Play (Android). Free to download.</span></div></li>
+            <li><div><strong>Create your account</strong><span>Sign up with email or Google. The free plan covers plenty of daily use.</span></div></li>
+            <li><div><strong>Use voice for hands-free goals</strong><span>Tap the mic icon and speak your task — great for "draft a reply to my last email" or "find a coffee shop nearby."</span></div></li>
+            <li><div><strong>Upload files and photos</strong><span>Tap the attachment icon to share a PDF, receipt, or screenshot — it can summarize, extract data, or answer questions about it.</span></div></li>
+            <li><div><strong>Upgrade for heavier use</strong><span>Claude Pro (~$20/mo) gives priority access, longer context, and more tool usage — ideal for daily workflows.</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="tools" class="bg-cream">
+  <div class="container">
+    <div class="section-label">05 — popular platforms</div>
+    <h2 class="section-title">Explore the ecosystem</h2>
+    <p class="section-sub">A wide range of tools to choose from — here are the most beginner-friendly options available today.</p>
+    <div class="tools-grid">
+      <a href="https://claude.ai" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">🤖</div><div class="tool-info"><strong>Claude</strong><span>Strong at reasoning, writing, and safe tool use.</span><div class="tool-badge">free tier</div></div></a>
+      <a href="https://openai.com/chatgpt" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">💬</div><div class="tool-info"><strong>ChatGPT</strong><span>Great for general tasks and image generation.</span><div class="tool-badge">free tier</div></div></a>
+      <a href="https://github.com/microsoft/autogen" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">⚙️</div><div class="tool-info"><strong>AutoGen</strong><span>Microsoft's framework for multi-agent workflows.</span><div class="tool-badge">open source</div></div></a>
+      <a href="https://www.crewai.com" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">🚀</div><div class="tool-info"><strong>CrewAI</strong><span>Build teams of agents that collaborate on complex tasks.</span><div class="tool-badge">open source</div></div></a>
+      <a href="https://n8n.io" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">🔗</div><div class="tool-info"><strong>n8n</strong><span>No-code automation with AI agent nodes.</span><div class="tool-badge">visual builder</div></div></a>
+      <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener" class="tool-card fade-up"><div class="tool-icon">🔌</div><div class="tool-info"><strong>MCP Servers</strong><span>Plug-in connectors for files, calendars, and apps.</span><div class="tool-badge">open standard</div></div></a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="faq" class="bg-white">
+  <div class="container-sm">
+    <div class="section-label">06 — common questions</div>
+    <h2 class="section-title">Answers before you dive in</h2>
+    <div class="faq-list">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it safe to let an agent access my files and email?<span class="faq-icon">+</span></button><div class="faq-a">Most reputable agents ask for explicit permission before accessing anything. They operate within a sandbox — they can only touch what you've allowed. Start with low-permission use (web search only) and gradually grant more access as you get comfortable. Never share bank passwords or government IDs.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do I need to know how to code?<span class="faq-icon">+</span></button><div class="faq-a">No. Apps like Claude Desktop, ChatGPT, and n8n are fully graphical — you type goals in plain English. Coding knowledge only helps if you want to build custom agents, and even then the agents can help you write the code.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How is an AI agent different from a regular chatbot?<span class="faq-icon">+</span></button><div class="faq-a">A chatbot responds to one message at a time and has no tools or memory. An agent can pursue a multi-step goal across many actions, use external tools, check its own work, and loop until the job is done. Think of a chatbot as a smart encyclopedia and an agent as a capable assistant.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Will it make mistakes?<span class="faq-icon">+</span></button><div class="faq-a">Yes — agents make mistakes, especially on ambiguous or complex goals. The best practice is to stay in the loop: review what the agent did before it sends or deletes anything. Think of it as a fast assistant who benefits from a quick check before you sign off.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is this expensive?<span class="faq-icon">+</span></button><div class="faq-a">Most popular agent apps have a free tier covering casual use. Paid plans typically run $20–$30/month for daily power users. Open-source frameworks like AutoGen and CrewAI are free but require your own API key, which costs a few cents per task.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What's the best first task to try?<span class="faq-icon">+</span></button><div class="faq-a">Ask it to research something: "Search the web and give me a 5-bullet summary of the pros and cons of electric cars vs hybrid cars." This shows off web browsing, reasoning, and formatting — with zero risk since it's only reading, not writing or deleting anything.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-label" style="text-align:center;">ready when you are</div>
+    <h2 class="section-title">Pick a platform and start today</h2>
+    <p class="section-sub" style="margin:0 auto 2.2rem;">There's never been a better time to put your first AI agent to work. The hardest part is deciding what to try first.</p>
+    <div class="hero-btns">
+      <a href="#install" class="btn-primary">See install guide ↑</a>
+      <a href="https://claude.ai" target="_blank" rel="noopener" class="btn-ghost">Try Claude free →</a>
+    </div>
+  </div>
+</section>
+
+<footer><p>built for beginners · open source on <a href="https://github.com" target="_blank" rel="noopener">GitHub</a> · no ads, no tracking</p></footer>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+  function copySteps(platform) {
+    const steps = {
+      windows: "1. Download Claude Desktop at claude.ai/download\n2. Sign in or create a free account\n3. Settings > Features > enable Tools & Computer Use\n4. Try: 'Search the web for the best free note-taking apps'\n5. (Optional) npm install -g @modelcontextprotocol/server-filesystem",
+      mac: "1. Download Claude at claude.ai/download, drag to Applications\n2. Allow in System Settings > Privacy & Security\n3. Sign in > Settings > Features > enable Tools & Computer Use\n4. brew install node && npm install -g @modelcontextprotocol/server-filesystem\n5. Test: 'List files in Downloads I haven't opened in 30 days'",
+      linux: "1. python3 --version (or sudo apt install python3)\n2. pip install autogen-agentchat\n3. Get API key from console.anthropic.com\n4. Create agent.py and run: python3 agent.py",
+      phone: "1. Search 'Claude AI' on App Store or Google Play\n2. Create a free account\n3. Use mic icon for voice-driven tasks\n4. Tap attachment to upload files/photos\n5. Claude Pro (~$20/mo) for daily heavy use"
+    };
+    navigator.clipboard.writeText(steps[platform]).then(() => {
+      const btn = document.querySelector('#tab-' + platform + ' .copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
